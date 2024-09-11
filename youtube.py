@@ -3,7 +3,7 @@ import pymongo
 import psycopg2
 import pandas as pd
 import streamlit as st
-
+from streamlit_option_menu import option_menu
 
 #API key connection
 
@@ -149,7 +149,8 @@ def get_playlist_details(channel_id):
 #upload to mongoDB
 
 client=pymongo.MongoClient("mongodb+srv://arun:arun@cluster0.99e2pe3.mongodb.net/")
-db=client["Youtube_data"]
+db=client['Youtube_data']
+
 
 def channel_details(channel_id):
     ch_details=get_channel_info(channel_id)
@@ -167,13 +168,13 @@ def channel_details(channel_id):
 
 #Table creation for channels,playlists,videos,comments
 def channels_table(channel_name_s):
-    mydb = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="Arun2412",
-        database="youtube_data",
-        port="5432")
+    mydb=psycopg2.connect(host="localhost",
+                        user="postgres",
+                        password="Arun2412",
+                        database="youtube_data",
+                        port="5432")
     cursor=mydb.cursor()
+
     try:
         create_query='''create table if not exists channels(Channel_Name varchar(100),
                                                             Channel_Id varchar(80) primary key,
@@ -188,7 +189,7 @@ def channels_table(channel_name_s):
     except:
         print("Channels table already created")
 
-    
+    #fetching all datas
     query_1= "SELECT * FROM channels"
     cursor.execute(query_1)
     table= cursor.fetchall()
@@ -245,12 +246,11 @@ def channels_table(channel_name_s):
 
 
 def playlist_table(channel_name_s):
-    mydb = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="Arun2412",
-        database="youtube_data",
-        port="5432")
+    mydb=psycopg2.connect(host="localhost",
+                        user="postgres",
+                        password="Arun2412",
+                        database="youtube_data",
+                        port="5432")
     cursor=mydb.cursor()
 
     create_query='''create table if not exists playlists(Playlist_Id varchar(100) primary key,
@@ -295,12 +295,11 @@ def playlist_table(channel_name_s):
         mydb.commit()
 
 def videos_table(channel_name_s):
-    mydb = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="Arun2412",
-        database="youtube_data",
-        port="5432")
+    mydb=psycopg2.connect(host="localhost",
+                        user="postgres",
+                        password="Arun2412",
+                        database="youtube_data",
+                        port="5432")
     cursor=mydb.cursor()
 
     create_query='''create table if not exists videos(Channel_Name varchar(100),
@@ -377,12 +376,11 @@ def videos_table(channel_name_s):
 
 
 def comments_table(channel_name_s):
-    mydb = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="Arun2412",
-        database="youtube_data",
-        port="5432")
+    mydb=psycopg2.connect(host="localhost",
+                        user="postgres",
+                        password="Arun2412",
+                        database="youtube_data",
+                        port="5432")
     cursor=mydb.cursor()
 
     create_query='''create table if not exists comments(Comment_Id varchar(100) primary key,
@@ -483,14 +481,33 @@ def show_comments_table():
 #streamlit part
 
 with st.sidebar:
-    st.title(":red[YOUTUBE DATA HAVERSTING AND WAREHOUSING]")
-    st.header("Skill Take Away")
-    st.caption("Python Scripting")
-    st.caption("Data Collection")
-    st.caption("MongoDB")
-    st.caption("API Integration")
-    st.caption("Data Management using MongoDB and SQL")
+    selected =option_menu("Main Menu",
+                        ["Home","Data collection and upload","MYSQL Database"],
+                        icons=["house","cloud-upload","database", "filetype-sql", "bar-chart-line"],
+                        menu_icon="menu-up",
+                        orientation="vertical")
 
+# Setting up the option "Home" in streamlit page
+if selected == "Home":
+    st.title(':red[You]Tube :blue[Data Harvesting & Warehousing using SQL]')
+    st.subheader(':blue[Domain :] Social Media')
+    st.subheader(':blue[Overview :]')
+    st.markdown('''Build a simple dashboard or UI using Streamlit and 
+                retrieve YouTube channel data with the help of the YouTube API.
+                Stored the data in an SQL database(warehousing) managed by XAMPP control panel,
+                enabling querying of the data using SQL.Visualize the data within the Streamlit app to uncover insights,
+                trends with the YouTube channel data''')
+    st.subheader(':blue[Skill Take Away :]')
+    st.markdown(''' Python scripting,Data Collection,API integration,Data Management using SQL,Streamlit''')
+    st.subheader(':blue[About :]')
+    st.markdown('''Hello! I'm Arun, a BE graduate with a keen interest in data science and analytics.
+                Currently on an exciting journey into the world of data science,
+                this is my first project title as YouTube data harvesting and warehousing using SQL, 
+                where I explored the vast realm of YouTube data to extract meaningful insights.
+                This experience ignited my passion for data-driven decision-making and deepened my understanding of
+                data extraction techniques and Database management.''')
+    st.subheader(':blue[Contact:]')
+    st.markdown('#### Email : arunshanmugam49@gmail.com')
 channel_id=st.text_input("Enter the channel ID")
 
 if st.button("collect and store data"):
@@ -507,7 +524,7 @@ if st.button("collect and store data"):
         insert=channel_details(channel_id)
         st.success(insert)
 
-
+#New code
         
 all_channels= []
 coll1=db["channel_details"]
@@ -536,12 +553,11 @@ elif show_table=="COMMENTS":
 
 #SQL Connection
 
-mydb = psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="Arun2412",
-        database="youtube_data",
-        port="5432")
+mydb=psycopg2.connect(host="localhost",
+                    user="postgres",
+                    password="Arun2412",
+                    database="youtube_data",
+                    port="5432")
 cursor=mydb.cursor()
 
 question=st.selectbox("Select your question",("1. All the videos and the channel name",
@@ -560,7 +576,7 @@ if question=="1. All the videos and the channel name":
     cursor.execute(query1)
     mydb.commit()
     t1=cursor.fetchall()
-    df=pd.DataFrame(t1,columns=["video title","channel name"])
+    df=pd.DataFrame(t1,columns=["videos title","channel name"])
     st.write(df)
 
 elif question=="2. channels with most number of videos":
@@ -623,7 +639,7 @@ elif question=="8. videos published in the year of 2022":
     df8=pd.DataFrame(t8,columns=["videotitle","published_date","channelname"])
     st.write(df8)
 
-elif question=="9. average duration of all videos in each channel":
+elif question=="9. average duration of all video in each channel":
     query9='''select channel_name as channelname,AVG(duration) as averageduration from videos group by channel_name'''
     cursor.execute(query9)
     mydb.commit()
@@ -640,11 +656,10 @@ elif question=="9. average duration of all videos in each channel":
     st.write(df1)
 
 elif question=="10. videos with highest number of comments":
-    query10='''select title as videotitle, channel_name as channelname,comments as comments from videos where comments is
+    query10='''select title as videotitle, channel_name as channelname,comments as comments from video where comments is
                 not null order by comments desc'''
     cursor.execute(query10)
     mydb.commit()
     t10=cursor.fetchall()
     df10=pd.DataFrame(t10,columns=["video title","channel name","comments"])
     st.write(df10)
-
